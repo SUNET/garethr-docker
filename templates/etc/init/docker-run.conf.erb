@@ -10,6 +10,13 @@ stop on stopping <%= @service_name %>
 respawn
 respawn limit 5 20
 
+<% if @verify_checksum -%>
+pre-start script
+  test -f /var/lib/puppet/state/verify_docker_image.<%= @sanitised_title %> && { stop; exit 0; }
+  true
+end script
+<% end -%>
+
 script
 <% if @use_name -%>
   <%= @docker_command %> inspect <%= @name %> && <%= @docker_command %> start -a -i <%= @name %>
