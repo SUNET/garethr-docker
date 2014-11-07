@@ -58,6 +58,7 @@ define docker::run(
   $extra_parameters_array = any2array($extra_parameters)
 
   $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-')
+  $sanitised_image = regsubst($image, '[^0-9A-Za-z.\-]', '-')
 
   $provider = $::operatingsystem ? {
     'Ubuntu' => 'upstart',
