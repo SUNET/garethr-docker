@@ -12,7 +12,9 @@ respawn limit 5 20
 
 <% if @verify_checksum -%>
 pre-start script
-  test -f /var/lib/puppet/state/verify_docker_image.<%= @sanitised_image %> && { stop; exit 0; }
+  # require file saying checksum was verified OK
+  # (file created by /usr/local/bin/verify_docker_image, invoked by Puppet docker::image)
+  test -f /var/lib/puppet/state/verify_docker_image.<%= @sanitised_image %> || { stop; exit 0; }
   true
 end script
 <% end -%>
