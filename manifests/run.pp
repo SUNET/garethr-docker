@@ -23,6 +23,8 @@ define docker::run(
   $disable_network = false,
   $privileged = false,
   $extra_parameters = undef,
+  $verify_checksum = true,
+  $start_on = $docker::params::service_name,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -33,6 +35,7 @@ define docker::run(
   validate_re($memory_limit, '^[\d]*(b|k|m|g)$')
   validate_string($docker_command)
   validate_string($service_name)
+  validate_string($start_on)
   if $command {
     validate_string($command)
   }
@@ -56,7 +59,8 @@ define docker::run(
   $lxc_conf_array = any2array($lxc_conf)
   $extra_parameters_array = any2array($extra_parameters)
 
-  $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-')
+  $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')
+  $sanitised_image = regsubst($image, '[^0-9A-Za-z.\-]', '-', 'G')
 
   $provider = $::operatingsystem ? {
     'Ubuntu' => 'upstart',

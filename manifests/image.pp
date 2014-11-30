@@ -19,6 +19,7 @@ define docker::image(
   $image     = $title,
   $image_tag = undef,
   $force     = false,
+  $checksums = [],
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -32,12 +33,24 @@ define docker::image(
     $image_force   = ''
   }
 
+  $checksums_str = join($checksums, ' ')
+
   if $image_tag {
-    $image_install = "${docker_command} pull ${image}:${image_tag}"
+    if $checksums_str != '' {
+      $image_verify = "; /usr/local/bin/verify_docker_image ${docker_command} '${image}:${image_tag}' $checksums_str"
+    } else {
+      $image_verify = ''
+    }
+    $image_install = "${docker_command} pull ${image}:${image_tag} ${image_verify}"
     $image_remove  = "${docker_command} rmi ${image_force}${image}:${image_tag}"
-    $image_find    = "${docker_command} images | grep ^${image} | awk '{ print \$2 }' | grep ${image_tag}"
+    $image_find    = "${docker_command} images | grep ^${image} | awk '{ print \$2 }' | grep ^${image_tag}$"
   } else {
-    $image_install = "${docker_command} pull ${image}"
+    if $checksums_str != '' {
+      $image_verify  = "/usr/local/bin/verify_docker_image ${docker_command} '${image}' $checksums_str"
+    } else {
+      $image_verify = ''
+    }
+    $image_install = "${docker_command} pull ${image} ${image_verify}"
     $image_remove  = "${docker_command} rmi ${image_force}${image}"
     $image_find    = "${docker_command} images | grep ^${image}"
   }
