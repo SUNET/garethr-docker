@@ -24,6 +24,7 @@ define docker::run(
   $privileged = false,
   $extra_parameters = undef,
   $verify_checksum = true,
+  $start_on = $docker::params::service_name,
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -34,6 +35,7 @@ define docker::run(
   validate_re($memory_limit, '^[\d]*(b|k|m|g)$')
   validate_string($docker_command)
   validate_string($service_name)
+  validate_string($start_on)
   if $command {
     validate_string($command)
   }
