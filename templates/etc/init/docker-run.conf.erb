@@ -10,14 +10,25 @@ stop on stopping <%= @start_on %>
 respawn
 respawn limit 5 20
 
-<% if @verify_checksum -%>
 pre-start script
+  <% if @verify_checksum -%>
   # require file saying checksum was verified OK
   # (file created by /usr/local/bin/verify_docker_image, invoked by Puppet docker::image)
   test -f /var/lib/puppet/state/verify_docker_image.<%= @sanitised_image %> || { stop; exit 0; }
+  <% end -%>
+
+  <%= if @pre_start -%>
+     <%= @pre_start %> <%= @image %> <%= @name %>
+  <% end -%>
   true
 end script
-<% end -%>
+
+post-start script
+   <%= if @post_start -%>
+     <%= @post_start %> <%= @image %> <%= @name %>
+   <% end -%>
+   true
+end script
 
 script
 <% if @use_name -%>
@@ -67,5 +78,15 @@ post-stop script
 if [ -e "/var/run/docker-<%= @sanitised_title %>.cid" ]; then
   <%= @docker_command %> kill "$(cat /var/run/docker-<%= @sanitised_title %>.cid)" && \
     rm "/var/run/docker-<%= @sanitised_title %>.cid"
+  <%= if @post_stop -%>
+     <%= @post_stop %> <%= @image %> <%= @name %>
+  <% end -%>
 fi
+end script
+
+pre-stop script
+  <%= if @pre_stop -%>
+     <%= @pre_stop %> <%= @image %> <%= @name %>
+  <% end -%>
+  true
 end script

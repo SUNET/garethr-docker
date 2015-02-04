@@ -25,6 +25,10 @@ define docker::run(
   $extra_parameters = undef,
   $verify_checksum = true,
   $start_on = $docker::params::service_name,
+  $pre_start = undef,
+  $post_start = undef,
+  $pre_stop = undef,
+  $post_stop = undef
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
