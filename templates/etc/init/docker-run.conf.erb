@@ -17,14 +17,14 @@ pre-start script
   test -f /var/lib/puppet/state/verify_docker_image.<%= @sanitised_image %> || { stop; exit 0; }
   <% end -%>
 
-  <%= if @pre_start -%>
+  <% if @pre_start -%>
      env IMAGE="<%= @image %>" NAME="<%= @name %>" <%= @pre_start %>
   <% end -%>
   true
 end script
 
 post-start script
-   <%= if @post_start -%>
+   <% if @post_start -%>
      env CID="`cat /var/run/docker-<%= @sanitised_title %>.cid`" IMAGE="<%= @image %>" NAME="<%= @name %>" <%= @post_start %>
    <% end -%>
    true
@@ -76,7 +76,7 @@ end script
 
 post-stop script
 if [ -e "/var/run/docker-<%= @sanitised_title %>.cid" ]; then
-  <%= if @post_stop -%>
+  <% if @post_stop -%>
    env CID="`cat /var/run/docker-<%= @sanitised_title %>.cid`" IMAGE="<%= @image %>" NAME="<%= @name %>" <%= @post_stop %>
   <% end -%>
   <%= @docker_command %> kill "$(cat /var/run/docker-<%= @sanitised_title %>.cid)" && \
@@ -85,7 +85,7 @@ fi
 end script
 
 pre-stop script
-  <%= if @pre_stop -%>
+  <% if @pre_stop -%>
      env CID="`cat /var/run/docker-<%= @sanitised_title %>.cid`" IMAGE="<%= @image %>" NAME="<%= @name %>"  <%= @pre_stop %>
   <% end -%>
   true
