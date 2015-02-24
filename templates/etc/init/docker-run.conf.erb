@@ -18,14 +18,15 @@ pre-start script
   <% end -%>
 
   <% if @pre_start -%>
-     env IMAGE="<%= @image %>" NAME="<%= @name %>" <%= @pre_start %>
+     env ACTION="pre-start" IMAGE="<%= @image %>" NAME="<%= @name %>" <%= @pre_start %>
   <% end -%>
   true
 end script
 
 post-start script
    <% if @post_start -%>
-     env CID="`cat /var/run/docker-<%= @sanitised_title %>.cid`" IMAGE="<%= @image %>" NAME="<%= @name %>" <%= @post_start %>
+     env ACTION="post-start" CID="`cat /var/run/docker-<%= @sanitised_title %>.cid`" \
+     	 IMAGE="<%= @image %>" NAME="<%= @name %>" <%= @post_start %>
    <% end -%>
    true
 end script
@@ -77,7 +78,8 @@ end script
 post-stop script
 if [ -e "/var/run/docker-<%= @sanitised_title %>.cid" ]; then
   <% if @post_stop -%>
-   env CID="`cat /var/run/docker-<%= @sanitised_title %>.cid`" IMAGE="<%= @image %>" NAME="<%= @name %>" <%= @post_stop %>
+   env ACTION="post-stop" CID="`cat /var/run/docker-<%= @sanitised_title %>.cid`" \
+       IMAGE="<%= @image %>" NAME="<%= @name %>" <%= @post_stop %>
   <% end -%>
   <%= @docker_command %> kill "$(cat /var/run/docker-<%= @sanitised_title %>.cid)" && \
     rm "/var/run/docker-<%= @sanitised_title %>.cid"
@@ -86,7 +88,8 @@ end script
 
 pre-stop script
   <% if @pre_stop -%>
-     env CID="`cat /var/run/docker-<%= @sanitised_title %>.cid`" IMAGE="<%= @image %>" NAME="<%= @name %>"  <%= @pre_stop %>
+     env ACTION="pre-stop" CID="`cat /var/run/docker-<%= @sanitised_title %>.cid`" \
+     	 IMAGE="<%= @image %>" NAME="<%= @name %>"  <%= @pre_stop %>
   <% end -%>
   true
 end script
