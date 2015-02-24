@@ -26,7 +26,7 @@ end script
 post-start script
    <% if @post_start -%>
      env ACTION="post-start" CID="`cat /var/run/docker-<%= @sanitised_title %>.cid`" \
-     	 IMAGE="<%= @image %>" NAME="<%= @name %>" <%= @post_start %>
+         IMAGE="<%= @image %>" NAME="<%= @name %>" <%= @post_start %>
    <% end -%>
    true
 end script
@@ -95,7 +95,7 @@ end script
 pre-stop script
   <% if @pre_stop -%>
      env ACTION="pre-stop" CID="`cat /var/run/docker-<%= @sanitised_title %>.cid`" \
-     	 IMAGE="<%= @image %>" NAME="<%= @name %>"  <%= @pre_stop %>
+         IMAGE="<%= @image %>" NAME="<%= @name %>"  <%= @pre_stop %>
   <% end -%>
   true
 end script
