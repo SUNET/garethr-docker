@@ -25,6 +25,7 @@ define docker::run(
   $extra_parameters = undef,
   $verify_checksum = true,
   $start_on = $docker::params::service_name,
+  $stop_on = $docker::params::service_name,
   $pre_start = undef,
   $post_start = undef,
   $pre_stop = undef,
@@ -40,6 +41,7 @@ define docker::run(
   validate_string($docker_command)
   validate_string($service_name)
   validate_string($start_on)
+  validate_string($stop_on)
   if $command {
     validate_string($command)
   }

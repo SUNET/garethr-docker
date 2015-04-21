@@ -5,7 +5,7 @@ description "start and stop <%= @title %> in docker"
 author "Gareth Rushgrove"
 
 start on (started <%= @start_on %>)
-stop on stopping <%= @start_on %>
+stop on (stopping <%= @stop_on %>)
 
 respawn
 respawn limit 5 20
