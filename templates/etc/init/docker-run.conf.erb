@@ -85,7 +85,6 @@ script
 end script
 
 post-stop script
-if [ -e "/var/run/docker-<%= @sanitised_title %>.cid" ]; then
   <% if @post_stop -%>
    env ACTION="post-stop" \
        CID="`cat /var/run/docker-<%= @sanitised_title %>.cid` 2>/dev/null" \
@@ -94,18 +93,9 @@ if [ -e "/var/run/docker-<%= @sanitised_title %>.cid" ]; then
        NAME="<%= @name %>" \
        <%= @post_stop %>
   <% end -%>
-  <%= @docker_command %> kill "$(cat /var/run/docker-<%= @sanitised_title %>.cid)" && \
+  if [ -e "/var/run/docker-<%= @sanitised_title %>.cid" ]; then
+    <%= @docker_command %> kill "$(cat /var/run/docker-<%= @sanitised_title %>.cid)" && \
       rm "/var/run/docker-<%= @sanitised_title %>.cid"
-else
-  <% if @post_stop -%>
-   env ACTION="post-stop" \
-       CID="`cat /var/run/docker-<%= @sanitised_title %>.cid 2>/dev/null`" \
-       CIDFILE="/var/run/docker-<%= @sanitised_title %>.cid" \
-       IMAGE="<%= @image %>" \
-       NAME="<%= @name %>" \
-       <%= @post_stop %>
-  <% else -%>
-   true
   <% end -%>
 fi
 end script
