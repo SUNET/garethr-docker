@@ -96,8 +96,7 @@ post-stop script
   if [ -e "/var/run/docker-<%= @sanitised_title %>.cid" ]; then
     <%= @docker_command %> kill "$(cat /var/run/docker-<%= @sanitised_title %>.cid)" && \
       rm "/var/run/docker-<%= @sanitised_title %>.cid"
-  <% end -%>
-fi
+  fi
 end script
 
 pre-stop script
