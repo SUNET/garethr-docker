@@ -56,19 +56,22 @@ define docker::image(
   }
 
   if $ensure == 'absent' {
-    exec { $image_remove:
+    exec { "${name}_image_remove":
+      command => $image_remove,
       path    => ['/bin', '/usr/bin'],
       onlyif  => $image_find,
       timeout => 0,
     }
   } elsif $ensure == 'latest' {
-    exec { $image_install:
+    exec { "${name}_image_install":
+      command => $image_install,
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
       timeout     => 0,
     }
   } else {
-    exec { $image_install:
+    exec { "${name}_image_install":
+      command => $image_install,
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
       unless      => $image_find,
