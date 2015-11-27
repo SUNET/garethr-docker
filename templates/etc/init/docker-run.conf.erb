@@ -43,9 +43,9 @@ end script
 script
 <% if @use_name -%>
   <%= @docker_command %> inspect <%= @name %> && <%= @docker_command %> start -a -i <%= @name %>
-  <%= @docker_command %> inspect <%= @name %> || <%= @docker_command %> run --cidfile=/var/run/docker-<%= @sanitised_title %>.cid \
+  <%= @docker_command %> inspect <%= @name %> || exec <%= @docker_command %> run --cidfile=/var/run/docker-<%= @sanitised_title %>.cid \
 <% else -%>
-  <%= @docker_command %> run --cidfile=/var/run/docker-<%= @sanitised_title %>.cid \
+  exec <%= @docker_command %> run --cidfile=/var/run/docker-<%= @sanitised_title %>.cid \
 <% end -%>
     <% if @username %>-u '<%= @username %>' <% end %> \
     <% if @hostname %>-h '<%= @hostname %>'<% end %> \
@@ -80,8 +80,7 @@ script
       <%= param %> <% end %> \
     <% end -%> \
     <%= @image %> \
-    <% if @command %> <%= @command %><% end %> &&
-  exec <%= @docker_command %> wait "$(cat /var/run/docker-<%= @sanitised_title %>.cid)"
+    <% if @command %> <%= @command %><% end %>
 end script
 
 post-stop script
