@@ -87,7 +87,7 @@ end script
 post-stop script
   <% if @post_stop -%>
    env ACTION="post-stop" \
-       CID="`cat /var/run/docker-<%= @sanitised_title %>.cid` 2>/dev/null" \
+       CID="`cat /var/run/docker-<%= @sanitised_title %>.cid 2>/dev/null`" \
        CIDFILE="/var/run/docker-<%= @sanitised_title %>.cid" \
        IMAGE="<%= @image %>" \
        NAME="<%= @name %>" \
