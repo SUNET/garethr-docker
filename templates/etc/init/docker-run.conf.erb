@@ -8,7 +8,6 @@ start on (started <%= @start_on %>)
 stop on (stopping <%= @stop_on %>)
 
 respawn
-respawn limit 5 20
 
 pre-start script
   <% if @verify_checksum -%>
@@ -96,6 +95,7 @@ post-stop script
       <%= @docker_command %> kill "$(cat /var/run/docker-<%= @sanitised_title %>.cid)" && \
       rm "/var/run/docker-<%= @sanitised_title %>.cid"
   fi
+  sleep 5 # limit respawn attempts to once every 5 seconds
   true
 end script
 
