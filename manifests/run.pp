@@ -29,7 +29,8 @@ define docker::run(
   $pre_start = undef,
   $post_start = undef,
   $pre_stop = undef,
-  $post_stop = undef
+  $post_stop = undef,
+  $trigger_restart = undef
 ) {
   include docker::params
   $docker_command = $docker::params::docker_command
@@ -64,6 +65,7 @@ define docker::run(
   $links_array = any2array($links)
   $lxc_conf_array = any2array($lxc_conf)
   $extra_parameters_array = any2array($extra_parameters)
+  $trigger_restart_array = any2array($trigger_restart)
 
   $sanitised_title = regsubst($title, '[^0-9A-Za-z.\-]', '-', 'G')
   $sanitised_image = regsubst($image, '[^0-9A-Za-z.\-]', '-', 'G')
