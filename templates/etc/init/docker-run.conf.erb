@@ -37,6 +37,9 @@ post-start script
 	 NAME="<%= @name %>" \
          <%= @post_start %>
    <% end -%>
+   <% @trigger_restart_array.each do |image| -%>
+   service docker-<%= image %> restart
+   <% end -%>
    true
 end script
 
