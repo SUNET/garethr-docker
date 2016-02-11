@@ -23,7 +23,6 @@ define docker::run(
   $disable_network = false,
   $privileged = false,
   $extra_parameters = undef,
-  $verify_checksum = true,
   $start_on = $docker::params::service_name,
   $stop_on = $docker::params::service_name,
   $pre_start = undef,
