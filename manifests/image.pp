@@ -85,29 +85,32 @@ define docker::image(
   }
 
   if $ensure == 'absent' {
-    exec { "${name}_image_remove":
+    ensure_resource('exec', "${name}_image_remove",
+    {
       command => $image_remove,
       path    => ['/bin', '/usr/bin'],
       onlyif  => $image_find,
       timeout => 0,
-    }
+    })
   } elsif $ensure == 'latest' {
-    exec { "echo 'Update of ${image_arg} complete'":
+    ensure_resource('exec', "echo 'Update of ${image_arg} complete'",
+    {
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
       timeout     => 0,
       onlyif      => $image_install,
       require     => File['/usr/local/bin/update_docker_image.sh'],
-    }
+    })
   } elsif $ensure == 'present' {
-    exec { $image_install:
+    ensure_resource('exec', $image_install,
+    {
       unless      => $image_find,
       environment => 'HOME=/root',
       path        => ['/bin', '/usr/bin'],
       timeout     => 0,
       returns     => ['0', '1'],
       require     => File['/usr/local/bin/update_docker_image.sh'],
-    }
+    })
   }
 
 }
