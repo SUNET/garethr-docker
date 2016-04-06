@@ -104,12 +104,12 @@ define docker::image(
   } elsif $ensure == 'present' {
     ensure_resource('exec', $image_install,
     {
-      unless      => $image_find,
-      environment => 'HOME=/root',
-      path        => ['/bin', '/usr/bin'],
-      timeout     => 0,
-      returns     => ['0', '1'],
-      require     => File['/usr/local/bin/update_docker_image.sh'],
+      'unless'      => $image_find,
+      'environment' => 'HOME=/root',
+      'path'        => ['/bin', '/usr/bin'],
+      'timeout'     => 0,
+      'returns'     => ['0', '1'],
+      'require'     => File['/usr/local/bin/update_docker_image.sh'],
     })
   }
 
