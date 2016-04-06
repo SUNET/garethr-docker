@@ -64,8 +64,6 @@ define docker::image(
     $image_force   = ''
   }
 
-  $checksums_str = join($checksums, ' ')
-
   if $image_tag {
     $image_arg     = "${image}:${image_tag}"
     $image_remove  = "${docker_command} rmi ${image_force}${image}:${image_tag}"
