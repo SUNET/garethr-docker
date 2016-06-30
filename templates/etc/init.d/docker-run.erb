@@ -101,6 +101,9 @@ start() {
 
     retval=$?
     echo
+    <% if @after_start -%>
+        <%= @after_start %>
+    <% end -%>
     if [ $retval -eq 0 ]; then
         success
     else
@@ -117,7 +120,11 @@ stop() {
     <% if @remove_container_on_stop -%>
         $docker rm <% if @remove_volume_on_stop %>-v<% end %> <%= @sanitised_title %>
     <% end -%>
-    return $?
+    retval=$?
+    <% if @after_stop -%>
+        <%= @after_stop %>
+    <% end -%>
+    return $retval
 }
 
 clean() {

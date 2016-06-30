@@ -91,6 +91,8 @@ define docker::run(
   $restart = undef,
   $before_start = false,
   $before_stop = false,
+  $after_start = false,
+  $after_stop = false,
   $remove_container_on_start = true,
   $remove_container_on_stop = true,
   $remove_volume_on_start = false,
