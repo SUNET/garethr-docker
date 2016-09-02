@@ -1,11 +1,11 @@
 Puppet module for installing, configuring and managing
-[Docker](https://github.com/docker/docker) from the [official repository](http://docs.docker.com/installation/) or alternatively from [EPEL on RedHat](http://docs.docker.io/en/latest/installation/rhel/) based distributions.
+[Docker](https://github.com/docker/docker) from the [official repository](https://docs.docker.com/installation/) or alternatively from [EPEL on RedHat](https://docs.docker.io/en/latest/installation/rhel/) based distributions.
 
 [![Puppet
-Forge](http://img.shields.io/puppetforge/v/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Build
-Status](https://secure.travis-ci.org/garethr/garethr-docker.png)](http://travis-ci.org/garethr/garethr-docker) [![Documentation
-Status](http://img.shields.io/badge/docs-puppet--strings-lightgrey.svg)](https://garethr.github.io/garethr-docker) [![Puppet Forge
-Downloads](http://img.shields.io/puppetforge/dt/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Puppet Forge
+Forge](https://img.shields.io/puppetforge/v/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Build
+Status](https://secure.travis-ci.org/garethr/garethr-docker.png)](https://travis-ci.org/garethr/garethr-docker) [![Documentation
+Status](https://img.shields.io/badge/docs-puppet--strings-lightgrey.svg)](https://garethr.github.io/garethr-docker) [![Puppet Forge
+Downloads](https://img.shields.io/puppetforge/dt/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker) [![Puppet Forge
 Endorsement](https://img.shields.io/puppetforge/e/garethr/docker.svg)](https://forge.puppetlabs.com/garethr/docker)
 
 
@@ -75,7 +75,7 @@ class { 'docker':
 ```
 
 Docker recently [launched new official
-repositories](http://blog.docker.com/2015/07/new-apt-and-yum-repos/#comment-247448)
+repositories](https://blog.docker.com/2015/07/new-apt-and-yum-repos/#comment-247448)
 which are now the default for the module from version 5. If you want to
 stick with the old respoitories you can do so with the following:
 
@@ -298,6 +298,7 @@ docker::run { 'helloworld':
   ports           => ['4444', '4555'],
   expose          => ['4666', '4777'],
   links           => ['mysql:db'],
+  net             => 'my-user-def-net',
   volumes         => ['/var/lib/couchdb', '/var/log'],
   volumes_from    => '6446ea52fbc9',
   memory_limit    => '10m', # (format: '<number><unit>', where unit = b, k, m or g)
@@ -313,7 +314,7 @@ docker::run { 'helloworld':
   before_stop     => 'echo "So Long, and Thanks for All the Fish"',
   after           => [ 'container_b', 'mysql' ],
   depends         => [ 'container_a', 'postgres' ],
-  extra_parameters => [ '--net=my-user-def-net' ],
+  extra_parameters => [ '--restart=always' ],
 }
 ```
 
@@ -405,7 +406,7 @@ docker::networks::networks:
     subnet: '192.168.1.0/24'
     gateway: '192.168.1.1'
 ```
-
+The network defined can then be used on a `docker::run` resource with the `net` parameter.
 ### Compose
 
 Docker Compose allows for describing a set of containers in a simple
@@ -414,6 +415,14 @@ containers. The `docker_compose` type included in the module allows for
 using Puppet to run Compose. This means you can have Puppet remediate
 any issues and make sure reality matches the model in your Compose
 file.
+
+Before using the docker_compose type make sure the docker-compose utility is installed:
+
+```puppet
+class {'docker::compose': 
+  ensure => present,
+}
+```
 
 Here's an example. Given the following Compose file:
 
@@ -438,7 +447,7 @@ docker_compose { '/tmp/docker-compose.yml':
 Now when Puppet runs it will automatically run Compose is required,
 for example because the relevant Compose services aren't running.
 
-You can also pass addition options (for example to enable experimental
+You can also pass additional options (for example to enable experimental
 features) as well as provide scaling rules. The following example
 requests 2 containers be running for example. Puppet will now run
 Compose if the number of containers for a given service don't match the
@@ -454,8 +463,11 @@ docker_compose { '/tmp/docker-compose.yml':
 }
 ```
 
+It is also possible to give options to the ```docker-compose up``` command
+such as ```--remove-orphans``` using the ```up_args``` option.
+
 ### Private registries
-By default images will be pushed and pulled from [index.docker.io](http://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:
+By default images will be pushed and pulled from [index.docker.io](https://index.docker.io) unless you've specified a server. If you have your own private registry without authentication, you can fully qualify your image name. If your private registry requires authentication you may configure a registry:
 
 ```puppet
 docker::registry { 'example.docker.io:5000':
