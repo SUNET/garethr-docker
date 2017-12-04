@@ -120,6 +120,7 @@ define docker::run(
     $docker_command = $docker::params::docker_command
   }
   $service_name = $docker::params::service_name
+  $docker_group = $docker::params::docker_group
 
   validate_re($image, '^[\S]*$')
   validate_re($title, '^[\S]*$')
@@ -130,8 +131,8 @@ define docker::run(
   }
   validate_string($docker_command)
   validate_string($service_name)
-  validate_string($start_on)
-  validate_string($stop_on)
+  validate_string($docker_group)
+
   if $command {
     validate_string($command)
   }
@@ -255,12 +256,12 @@ define docker::run(
           $initscript = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
           $init_template = 'docker/etc/systemd/system/docker-run.erb'
           $uses_systemd = true
-          $mode = '0644'
+          $mode = '0640'
         } else {
           $uses_systemd = false
           $initscript = "/etc/init.d/${service_prefix}${sanitised_title}"
           $init_template = 'docker/etc/init.d/docker-run.erb'
-          $mode = '0755'
+          $mode = '0750'
         }
       }
       'RedHat': {
@@ -268,13 +269,13 @@ define docker::run(
           $initscript     = "/etc/init.d/${service_prefix}${sanitised_title}"
           $init_template  = 'docker/etc/init.d/docker-run.erb'
           $hasstatus      = undef
-          $mode           = '0755'
+          $mode           = '0750'
           $uses_systemd   = false
         } else {
           $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
           $init_template  = 'docker/etc/systemd/system/docker-run.erb'
           $hasstatus      = true
-          $mode           = '0644'
+          $mode           = '0640'
           $uses_systemd   = true
         }
       }
@@ -282,14 +283,14 @@ define docker::run(
         $initscript     = "/etc/systemd/system/${service_prefix}${sanitised_title}.service"
         $init_template  = 'docker/etc/systemd/system/docker-run.erb'
         $hasstatus      = true
-        $mode           = '0644'
+        $mode           = '0640'
         $uses_systemd   = true
       }
       'Gentoo': {
         $initscript     = "/etc/init.d/${service_prefix}${sanitised_title}"
         $init_template  = 'docker/etc/init.d/docker-run.gentoo.erb'
         $hasstatus      = true
-        $mode           = '0775'
+        $mode           = '0770'
         $uses_systemd   = false
       }
       default: {
@@ -326,6 +327,8 @@ define docker::run(
       file { $initscript:
         ensure  => present,
         content => template($init_template),
+        owner   => 'root',
+        group   => $docker_group,
         mode    => $mode,
       }
 
@@ -353,11 +356,11 @@ define docker::run(
             exec { "/bin/sh /etc/init.d/${service_prefix}${sanitised_title} stop":
               onlyif  => join($transition_onlyif, ' '),
               require => [],
-            } ->
-            file { "/var/run/${service_prefix}${sanitised_title}.cid":
+            }
+            -> file { "/var/run/${service_prefix}${sanitised_title}.cid":
               ensure => absent,
-            } ->
-            File[$initscript]
+            }
+            -> File[$initscript]
           }
 
           if $uses_systemd {
